@@ -13,7 +13,7 @@ st.set_page_config(
 @st.cache_resource
 def load_model_and_scaler():
     try:
-        # 注意这里的文件名要和你上传的一致
+        # 确保文件名和你上传到 GitHub 的完全一致
         model = joblib.load('rob_ensemble_model.pkl')
         scaler = joblib.load('rob_scaler.pkl')
         return model, scaler
@@ -67,23 +67,25 @@ with col1:
     )
 
 with col2:
-    # 4. History of abdominal surgery
-    # 这是一个二分类变量 (0/1)
+    # 4. History of abdominal surgery (修改点：只显示 No/Yes)
     f4_display = st.selectbox(
         "History of abdominal surgery",
-        options=["No (0)", "Yes (1)"],
+        options=["No", "Yes"], # 去掉了 (0) 和 (1)
         index=0,
         help="Does the patient have a history of prior abdominal surgeries?"
     )
-    f4 = 1 if "Yes" in f4_display else 0
+    # 转换逻辑：Yes -> 1, No -> 0
+    f4 = 1 if f4_display == "Yes" else 0
     
-    # 5. Plasma triglycerides
-    f5 = st.number_input(
-        "Plasma triglycerides (mmol/L)", 
-        min_value=0.0, 
-        value=1.5, 
-        step=0.1
+    # 5. Plasma triglycerides (修改点：只显示 Normal/High)
+    f5_display = st.selectbox(
+        "Plasma triglycerides", 
+        options=["Normal", "High"], # 去掉了单位，改为分类
+        index=0,
+        help="Normal level (0) vs High level (1)"
     )
+    # 转换逻辑：Normal -> 0, High -> 1
+    f5 = 0 if f5_display == "Normal" else 1
 
 # --- 预测逻辑 ---
 if st.button("Predict Difficulty", type="primary"):
@@ -98,6 +100,7 @@ if st.button("Predict Difficulty", type="primary"):
         ]
         
         # 注意顺序必须严格对应 feature_names
+        # f4 和 f5 已经是转换好的 0 或 1
         input_data = pd.DataFrame([[f1, f2, f3, f4, f5]], columns=feature_names)
         
         # 2. 标准化
