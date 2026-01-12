@@ -50,7 +50,7 @@ with col1:
     
     # 2. SMV adipose thickness
     f2 = st.number_input(
-        "ileocolic perivascular adipose thickness (mm)", 
+        "Ileocolic perivascular adipose thickness (mm)", 
         min_value=0.0, 
         value=10.0, 
         step=0.1,
@@ -134,5 +134,6 @@ if st.button("Predict Difficulty", type="primary"):
 # --- 页脚 ---
 st.markdown("---")
 st.caption("Model based on Weighted Ensemble (LR, AdaBoost, SVM, MLP, XGBoost).")
+
 
 
